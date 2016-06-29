@@ -10,12 +10,13 @@ PATH=/usr/local/bin:$PATH
 
 payload=$(mktemp /tmp/resource-in.XXXXXX)
 
-cat > $payload <&0
+cat > "$payload" <&0
 
-bot_token=$(jq -r '.bot.token' < $payload)
+bot_token=$(jq -r '.bot.token' < "$payload")
 text="$(jq '(.params.text // "text is empty")' < "${payload}")"
 chat_id="$(jq '(.params.chat_id)' < "${payload}")"
 
-curl -s  --data-urlencode -X GET 'https://api.telegram.org/bot${bot_token}/sendMessage?parse_mode=Markdown&chat_id=${chat_id}&text=${text}'
+url="https://api.telegram.org/bot${bot_token}/sendMessage?parse_mode=Markdown&chat_id=${chat_id}&text=${text}"
+curl --data-urlencode -XGET "$url"
 
 jq -n '{version:{ref:0}}' >&3
