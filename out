@@ -12,10 +12,10 @@ payload=$(mktemp /tmp/resource-in.XXXXXX)
 
 cat > $payload <&0
 
-webhook_url=$(jq -r '.source.url' < $payload)
+bot_token=$(jq -r '.bot.token' < $payload)
+text="$(jq '(.params.text // "text is empty")' < "${payload}")"
+chat_id="$(jq '(.params.chat_id)' < "${payload}")"
 
-body=$(jq -c '{"text":(.params.text // ""), "username": (.params.username // null), "icon_url": (.params.icon_url // null), "icon_emoji": (.params.icon_emoji // null), "channel": (.params.channel // null)}' < $payload)
-
-curl -s -X POST --data-urlencode "payload=$body" $webhook_url
+curl -s  --data-urlencode -X GET 'https://api.telegram.org/bot${bot_token}/sendMessage?parse_mode=Markdown&chat_id=${chat_id}&text=${text}'
 
 jq -n '{version:{ref:0}}' >&3
