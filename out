@@ -2,21 +2,48 @@
 
 set -e
 
+# Colors
+RED='\033[1;31m'
+NC='\033[0m' # No Color
+
 exec 3>&1
 exec 1>&2
 
 # for jq
 PATH=/usr/local/bin:$PATH
 
+#
+# Get parameters from the pipeline
+#
 payload=$(mktemp /tmp/resource-in.XXXXXX)
-
 cat > "$payload" <&0
 
-bot_token=$(jq -r '.bot.token' < "$payload")
+BOT_TOKEN=$(jq -r '(.source.bot_token // "")' < "$payload")
 text="$(jq '(.params.text // "text is empty")' < "${payload}")"
-chat_id="$(jq '(.params.chat_id)' < "${payload}")"
+CHAT_ID="$(jq '(.params.chat_id)' < "${payload}")"
 
-url="https://api.telegram.org/bot${bot_token}/sendMessage?parse_mode=Markdown&chat_id=${chat_id}&text=${text}"
-curl --data-urlencode -XGET "$url"
+#
+# Check mandatory parameters
+#
+if [ -z "$BOT_TOKEN" ]; then
+     printf "\n ${RED} Error! The Telegram bot token is not specified! Please, add the 'source.bot_token' property to your resource declaration. ${NC}\n"
+     exit 1
+fi
 
-jq -n '{version:{ref:0}}' >&3
+if [ -z "$CHAT_ID" ]; then
+     printf "\n ${RED} Error! The Telegram chat ID is not specified! Please, add the 'params.chat_id' property to your resource parameters. ${NC}\n"
+     exit 1
+fi
+
+#
+# Send the message to the Telegram
+#
+text="$(eval printf ${text} )"
+URL="https://api.telegram.org/bot${BOT_TOKEN}/sendMessage"
+curl -X POST --data chat_id="${CHAT_ID}" --data text="${text}" --data parse_mode=Markdown "$URL"
+
+#
+# print the output
+#
+timestamp="$(jq -n "{version:{timestamp:\"$(date +%s)\"}}")"
+echo "$timestamp" | jq -s add >&3
