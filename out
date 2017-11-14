@@ -20,7 +20,7 @@ cat > "$payload" <&0
 
 BOT_TOKEN=$(jq -r '(.source.bot_token // "")' < "$payload")
 text="$(jq '(.params.text // "text is empty")' < "${payload}")"
-CHAT_ID="$(jq '(.params.chat_id)' < "${payload}")"
+CHAT_ID="$(jq -r '(.params.chat_id // "")' < "${payload}")"
 
 #
 # Check mandatory parameters
@@ -40,7 +40,7 @@ fi
 #
 text="$(eval printf ${text} )"
 URL="https://api.telegram.org/bot${BOT_TOKEN}/sendMessage"
-curl -X POST --data chat_id="${CHAT_ID}" --data text="${text}" --data parse_mode=Markdown "$URL"
+curl -X POST --data chat_id=${CHAT_ID//\"/} --data text="${text}" --data parse_mode=Markdown "$URL"
 
 #
 # print the output
