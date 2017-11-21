@@ -50,7 +50,7 @@ jobs:
   plan:
     - put: telegram-notification
       params:
-         chat_id: <your chat ID without quotes>
+         chat_id: "<your chat ID>"
          text: "Build ok. [Build $BUILD_NAME](http://localhost:8080/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME)"
 ```
 
