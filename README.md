@@ -11,6 +11,17 @@ Before using this resource, you should create a bot for yourself. Please, [follo
 
 Then, [find out the chat ID](http://stackoverflow.com/a/32572159/622833) you want to send notifications to. Now you are ready to use it.
 
+### Private channel
+It is a good idea to create a private channel for your team where bot will print all the messages from Concourse.
+In this case you need to follow this steps:
+
+1) create a _public_ channel, give it a name, say, _@MyChannel_
+2) add your bot as an administrator
+3) then, send some testing message to this channel, use this command: `curl -X POST "https://api.telegram.org/bot<botApi>/sendMessage?chat_id=@MyChannel&text=123"`. You should see a new message from your bot in your channel. Check the JSON output from this command, you will find an `chat_id`. The output could look like this:
+`{ "ok" : true, "result" : { "chat" : { "id" : -1001005582487, "title" : "Test Private Channel", "type" : "channel" }, "date" : 1448245538, "message_id" : 7, "text" : "123" } }`
+, where `chat_id` is `-1001005582487`
+4) optionally, now you can make your channel private, generate link and send it to your collegues
+
 ## Use the resource
 
 The simplest example:
