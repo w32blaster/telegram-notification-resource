@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-
+cd "${1}"
 # Colors
 RED='\033[1;31m'
 NC='\033[0m' # No Color
@@ -19,12 +19,28 @@ payload=$(mktemp /tmp/resource-in.XXXXXX)
 cat > "$payload" <&0
 
 BOT_TOKEN=$(jq -r '(.source.bot_token // "")' < "$payload")
-text="$(jq '(.params.text // "text is empty")' < "${payload}")"
+text="$(jq -r '(.params.text // "text is empty")' < "${payload}")"
 CHAT_ID="$(jq -r '(.params.chat_id // "")' < "${payload}")"
+text_file_path="$(jq -r '(.params.text_file // "")' < "${payload}")"
+PARSE_MODE="$(jq -r '(.params.parse_mode // "HTML")' < "${payload}")"
+echo $text_file_path>&2
+echo $(pwd)>&2
+echo $(ls -A ./current_image)>&2
+echo $PARSE_MODE>&2
+#
+#Select a message, text or text_file. text_file have higher priority.
+#
+if [ -n "$text_file_path" ]; then
+    text=$(cat $text_file_path)
+fi
 
 #
 # Check mandatory parameters
 #
+if [ "$PARSE_MODE" != "HTML"  ] && [ "$PARSE_MODE" != "Markdown" ]; then
+     printf "\n ${RED} Error! Incorrect parse mode. Please use one of HTML or Markdown in params.parse_mode.${NC}\n"
+     exit 1
+fi
 if [ -z "$BOT_TOKEN" ]; then
      printf "\n ${RED} Error! The Telegram bot token is not specified! Please, add the 'source.bot_token' property to your resource declaration. ${NC}\n"
      exit 1
@@ -38,9 +54,8 @@ fi
 #
 # Send the message to the Telegram
 #
-text="$(eval printf ${text} )"
 URL="https://api.telegram.org/bot${BOT_TOKEN}/sendMessage"
-curl -X POST --data chat_id=${CHAT_ID//\"/} --data text="${text}" --data parse_mode=Markdown "$URL"
+curl -X POST --data chat_id=${CHAT_ID//\"/} --data text="${text}" --data parse_mode="$PARSE_MODE" "$URL"
 
 #
 # print the output
