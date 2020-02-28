@@ -23,10 +23,7 @@ text="$(jq -r '(.params.text // "text is empty")' < "${payload}")"
 CHAT_ID="$(jq -r '(.params.chat_id // "")' < "${payload}")"
 text_file_path="$(jq -r '(.params.text_file // "")' < "${payload}")"
 PARSE_MODE="$(jq -r '(.params.parse_mode // "HTML")' < "${payload}")"
-echo $text_file_path>&2
-echo $(pwd)>&2
-echo $(ls -A ./current_image)>&2
-echo $PARSE_MODE>&2
+
 #
 #Select a message, text or text_file. text_file have higher priority.
 #
