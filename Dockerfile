@@ -1,6 +1,6 @@
 FROM gliderlabs/alpine:3.4
 
-RUN apk add --no-cache curl bash jq
+RUN apk add --no-cache curl bash jq gettext
 
 COPY check /opt/resource/check
 COPY in    /opt/resource/in
