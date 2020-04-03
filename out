@@ -22,7 +22,7 @@ BOT_TOKEN=$(jq -r '(.source.bot_token // "")' < "$payload")
 text="$(jq -r '(.params.text // "text is empty")' < "${payload}")"
 CHAT_ID="$(jq -r '(.params.chat_id // "")' < "${payload}")"
 text_file_path="$(jq -r '(.params.text_file // "")' < "${payload}")"
-PARSE_MODE="$(jq -r '(.params.parse_mode // "HTML")' < "${payload}")"
+PARSE_MODE="$(jq -r '(.params.parse_mode // "Markdown")' < "${payload}")"
 
 #
 #Select a message, text or text_file. text_file have higher priority.

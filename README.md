@@ -1,5 +1,5 @@
 # telegram-notification-resource
-Resource for Concourse CI to send messages to Telegram.
+Resource for Concourse CI to send messages to Telegram. You can pass your message from tasks with text file, or send a static message. 
 
 ![Telegram Botfather](https://core.telegram.org/file/811140763/1/PihKNbjT8UE/03b57814e13713da37)
 
@@ -51,7 +51,11 @@ jobs:
     - put: telegram-notification
       params:
          chat_id: "<your chat ID>"
+         # you need to specify one of text or text_file properties, with text_file you can generate message text in your previous task
          text: "Build ok. [Build $BUILD_NAME](http://localhost:8080/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME)"
+         text_file: './task_output/file_with_message'
+         # optional parameter, Telegram API parse mode, may be HTML or Markdown, Markdown is default value
+         parse_mode: HTML
 ```
 
 Have fun.
