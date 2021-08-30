@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.4
+FROM alpine:3.14.1
 
 RUN apk add --no-cache curl bash jq gettext
 
