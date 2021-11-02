@@ -1,4 +1,4 @@
-ist: focal
+dist: focal
 
 services:
   - docker
