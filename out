@@ -51,7 +51,7 @@ fi
 #
 # Send the message to the Telegram
 #
-text=$(echo $text | envsubst)
+text=$(echo "$text" | envsubst)
 URL="https://api.telegram.org/bot${BOT_TOKEN}/sendMessage"
 curl -X POST --data chat_id=${CHAT_ID//\"/} --data text="${text}" --data parse_mode="$PARSE_MODE" "$URL"
 
