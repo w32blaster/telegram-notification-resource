@@ -21,6 +21,7 @@ cat > "$payload" <&0
 BOT_TOKEN=$(jq -r '(.source.bot_token // "")' < "$payload")
 text="$(jq -r '(.params.text // "text is empty")' < "${payload}")"
 CHAT_ID="$(jq -r '(.params.chat_id // "")' < "${payload}")"
+MESSAGE_THREAD_ID="$(jq -r '(.params.message_thread_id // "")' < "${payload}")"
 text_file_path="$(jq -r '(.params.text_file // "")' < "${payload}")"
 PARSE_MODE="$(jq -r '(.params.parse_mode // "Markdown")' < "${payload}")"
 
@@ -53,7 +54,7 @@ fi
 #
 text=$(echo "$text" | envsubst)
 URL="https://api.telegram.org/bot${BOT_TOKEN}/sendMessage"
-curl -X POST --data chat_id=${CHAT_ID//\"/} --data text="${text}" --data parse_mode="$PARSE_MODE" "$URL"
+curl --silent -X POST --data chat_id=${CHAT_ID//\"/} ${MESSAGE_THREAD_ID:+--data message_thread_id=${MESSAGE_THREAD_ID//\"/}} --data text="${text}" --data parse_mode="$PARSE_MODE" "$URL"
 
 #
 # print the output
