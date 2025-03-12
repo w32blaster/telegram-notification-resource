@@ -22,6 +22,12 @@ In this case you need to follow this steps:
 , where `chat_id` is `-1001005582487`
 4) optionally, now you can make your channel private, generate link and send it to your collegues
 
+### Forum topics
+If you want to send messages to forum topics, you need to get the forum topic ID from the field `message_thread_id` using any of the following methods:
+
+1) Get the `chat_id` and `message_thread_id` in the same way as for private channels
+2) or send any message to the topic, then copy the link to the message through the context menu of this message "Copy Message Link". In the link of the form https://t.me/c/2251248935/33/122 the first group of digits is `chat_id`,  add -100 to the beginning and you get "-1002251248935", the second group of digits "33" is `message_thread_id`.
+
 ## Use the resource
 
 The simplest example:
@@ -51,6 +57,7 @@ jobs:
     - put: telegram-notification
       params:
          chat_id: "<your chat ID>"
+         message_thread_id: "<your forum topic ID>"
          # you need to specify one of text or text_file properties, with text_file you can generate message text in your previous task
          text: "Build ok. [Build $BUILD_NAME](http://localhost:8080/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME)"
          text_file: './task_output/file_with_message'
